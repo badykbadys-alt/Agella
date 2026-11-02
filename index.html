@@ -1,81 +1,178 @@
 <!DOCTYPE html>
-<html>
+<html lang="en">
 <head>
 <meta charset="UTF-8">
 <meta name="viewport" content="width=device-width, initial-scale=1.0">
-<title>Buy Credits - Instant</title>
+<title>quz</title>
 <script src="https://cdn.jsdelivr.net/npm/@supabase/supabase-js@2"></script>
-<script src="https://cdn.jsdelivr.net/npm/qrcodejs@1.0.0/qrcode.min.js"></script>
 <style>
-body{background:#000;color:#fff;font-family:Arial;padding:12px}
-.box{border:2px solid #ffcc00;border-radius:14px;padding:18px;text-align:center;background:#111;max-width:420px;margin:auto}
-h2{color:#ffcc00;font-size:15px}
-.addr{font-size:10px;word-break:break-all;background:#222;padding:8px;border-radius:6px;margin:10px 0;color:#0f0;border:1px dashed #0f0}
-.btn{width:100%;padding:13px;margin:7px 0;border-radius:8px;border:1px solid #ffcc00;background:#222;color:#ffcc00;cursor:pointer}
-.best{background:#ffcc00;color:#000;font-weight:bold}
-#qr{margin:10px auto;background:#fff;padding:8px;width:fit-content;border-radius:8px}
+:root{--pink:#ff2e78;--gold:#ffd700}
+body{background:#000;color:#fff;font-family:system-ui;margin:0;overflow-x:hidden}
+.black-card{background:linear-gradient(145deg,#111,#000);border:2px solid var(--pink);border-radius:24px;max-width:480px;margin:20px auto;padding:24px;position:relative;overflow:hidden;box-shadow:0 0 40px #ff2e7844}
+.heart{position:absolute;animation:float 6s infinite linear;font-size:22px}
+@keyframes float{0%{transform:translateY(100%) rotate(0deg);opacity:1}100%{transform:translateY(-500px) rotate(360deg);opacity:0}}
+.boss-glow{box-shadow:0 0 30px var(--gold);border-color:var(--gold)!important}
+.btn{background:var(--pink);border:0;color:#fff;padding:14px 22px;border-radius:12px;font-weight:700;width:100%;margin-top:12px;cursor:pointer}
+.tab{display:flex;gap:8px;justify-content:center;margin:16px}
+.tab button{flex:1;padding:10px;border-radius:10px;border:1px solid #333;background:#111;color:#fff}
+.tab button.active{background:var(--pink)}
+video,img{width:100%;border-radius:12px;margin-top:12px}
+.addr{font-size:11px;word-break:break-all;background:#222;padding:10px;border-radius:8px;margin:10px 0;color:#0f0;border:1px dashed #0f0}
 </style>
 </head>
 <body>
-<div class="box">
-<h2>💳 Buy Credits - Global Instant Pay</h2>
-<p style="font-size:11px;color:#aaa">Brazil / Mexico / Nigeria can all pay - Celo Network</p>
+<div class="tab">
+<button onclick="showTab('game')" class="active" id="t-game">Game</button>
+<button onclick="showTab('shop')" id="t-shop">Shop Credits</button>
+<button onclick="showTab('policy')" id="t-policy">Policy & Privacy</button>
+</div>
 
-<div id="qr"></div>
-<div class="addr" id="walletAddr">0x70bFD6856384C9cC74D47eE0F444c1fE4E96505a</div>
-<p style="font-size:10px;color:#aaa">Network: Celo - Token: cUSD - Copy address above</p>
+<div class="black-card" id="card">
+<div id="hearts"></div>
+<h2 id="q-title">Loading...</h2>
+<div id="q-media"></div>
+<div id="q-options"></div>
+<p id="credit-info"></p>
+<p style="text-align:center;margin-top:30px;user-select:none" id="adminTrigger">••• 💖 •••</p>
+</div>
 
-<button class="btn" onclick="selectPay(5,10)">$5 cUSD = 10 Credits (Global)</button>
-<button class="btn best" onclick="selectPay(10,25)">$10 cUSD = 25 Credits (Best - Global)</button>
-<button class="btn" onclick="selectPay(25,65)">$25 cUSD = 65 Credits (Global)</button>
+<div class="black-card" id="shopTab" style="display:none">
+<h2>Buy Credits - ALL MiniPay Methods → USDT</h2>
+<p>Your MiniPay Address:</p>
+<div class="addr" id="mpAddress">0x70bFD6856384C9cC74D47eE0F444c1fE4E96505a</div>
+<div style="background:#111;padding:12px;border-radius:12px;font-size:13px">
+<p>💳 <b>Card</b> - Visa/Mastercard Worldwide → USDT</p>
+<p>🏦 <b>Bank Transfer</b> - Any country bank → USDT</p>
+<p>🇧🇷 <b>PIX</b> - Brazil instant Nubank/Itaú/Bradesco → USDT</p>
+<p>🇲🇽 <b>SPEI / OXXO</b> - Mexico bank or cash at OXXO → USDT</p>
+<p>📱 <b>Apple Pay / Google Pay</b> → USDT</p>
+<p>💵 <b>Mobile Money</b> - M-Pesa, MTN, Airtel</p>
+<p>🔗 <b>Crypto Transfer</b> - Send cUSD/USDT on Celo to address above</p>
+</div>
+<h3>Packages</h3>
+<button class="btn" onclick="requestPay('5.5 USD - 20 Credits','PIX/Card')">$5.5 = 20 Credits</button>
+<button class="btn" onclick="requestPay('11 USD - 50 Credits','Bank Transfer')">$11 = 50 Credits</button>
+<button class="btn" onclick="requestPay('27 USD - 150 Credits','Crypto')">$27 = 150 Credits</button>
+<p style="font-size:12px;color:#aaa">After paying via ANY method above to the address, click "I Paid" and admin will confirm from MiniPay and add credits.</p>
+<button class="btn" style="background:var(--gold);color:#000" onclick="iPaid()">I PAID - Request Credits</button>
+</div>
 
-<button class="btn" style="background:#00c853;color:#fff;margin-top:14px" onclick="iPaid()">✅ I Paid - Continue to Q31</button>
-<div id="msg" style="margin-top:12px;font-size:12px;display:none"></div>
+<div class="black-card" id="policyTab" style="display:none">
+<h2>Policy & Privacy - Safe & Secure</h2>
+<p>✅ <b>Data Safe:</b> Questions stored on Supabase zonhvmhnhowekybciele (secure).</p>
+<p>✅ <b>Payments Safe:</b> All payments via MiniPay to 0x70bF...0505a on Celo - transparent.</p>
+<p>✅ <b>Fair Play:</b> 1-19 FREE. From Q20, costs 5 credits per question. Fail stays on same question.</p>
+<p>✅ <b>Boss Video:</b> Every 20,40,60,80... may include video love challenge.</p>
+<p>✅ <b>No Scam:</b> Admin 19761976 manually confirms USDT received before credits added.</p>
+</div>
+
+<div class="black-card" id="adminPanel" style="display:none">
+<h2>Admin - 19761976</h2>
+<input id="qText" placeholder="Question text" style="width:100%;padding:10px;margin:5px 0">
+<input id="qOpt" placeholder='Options comma separated e.g. Yes,No,Maybe' style="width:100%;padding:10px">
+<input id="qCorrect" type="number" placeholder="Correct index 0-..." style="width:100%;padding:10px">
+<input id="qOrder" type="number" placeholder="Order number e.g. 20" style="width:100%;padding:10px">
+<input id="qFile" type="file" accept="image/*,video/*">
+<label><input type="checkbox" id="qBoss"> Is Boss (20,40,60...) - video allowed</label>
+<button class="btn" onclick="uploadQuestion()">Upload to Supabase (All devices see)</button>
+<div id="adminPayments"></div>
 </div>
 
 <script>
 const SUPABASE_URL = "https://zonhvmhnhowekybciele.supabase.co";
-const SUPABASE_KEY = "sb_publishable_u1XnvNx8Skj5UC1DYAI-cg_fAdb-Vm6";
-const WALLET = "0x70bFD6856384C9cC74D47eE0F444c1fE4E96505a";
-const supabaseClient = supabase.createClient(SUPABASE_URL, SUPABASE_KEY);
+const SUPABASE_ANON = "sb_publishable_u1XnvNx8Skj5UC1DYAI-cg_fAdb-Vm6";
+const MINIPAY_ADDRESS = "0x70bFD6856384C9cC74D47eE0F444c1fE4E96505a";
+document.getElementById('mpAddress').innerText = MINIPAY_ADDRESS;
+const supabaseClient = window.supabase.createClient(SUPABASE_URL, SUPABASE_ANON);
 
-let selectedEuro=5, selectedCredits=10;
+let questions=[], current=0, credits=parseInt(localStorage.getItem('credits')||'10');
 
-// QR for wallet
-new QRCode(document.getElementById("qr"), {text: WALLET, width: 140, height: 140});
+function spawnHearts(){
+const c=document.getElementById('hearts');
+setInterval(()=>{
+const h=document.createElement('div'); h.className='heart';
+h.innerText=['💖','💘','💝','🌹','😍','💋','✨'][Math.floor(Math.random()*7)];
+h.style.left=Math.random()*90+'%'; h.style.top='80%'; c.appendChild(h);
+setTimeout(()=>h.remove(),6000);
+},300);
+}
+spawnHearts();
 
-function selectPay(euro, credits){
-  selectedEuro=euro; selectedCredits=credits;
-  document.getElementById('msg').style.display='block';
-  document.getElementById('msg').innerHTML = "Selected: $"+euro+" for "+credits+" credits<br>Send cUSD (Celo) to address above, then tap 'I Paid'";
-  document.getElementById('msg').style.color='#ffcc00';
+async function loadQs(){
+const {data}=await supabaseClient.from('questions').select('*').order('order_num',{ascending:true});
+questions=data||[];
+if(questions.length>0) renderQ(); else document.getElementById('q-title').innerText='No questions yet - Add via Admin 💖';
+}
+loadQs();
+
+function renderQ(){
+if(current>=questions.length){document.getElementById('q-title').innerText='All Done 💖';return;}
+const q=questions[current];
+document.getElementById('card').className='black-card'+(q.is_boss||q.order_num%20===0?' boss-glow':'');
+document.getElementById('q-title').innerText=`Q${q.order_num} ${q.is_boss?'👑 BOSS':''}: ${q.text}`;
+const mediaDiv=document.getElementById('q-media'); mediaDiv.innerHTML='';
+if(q.video_url) mediaDiv.innerHTML=`<video src="${q.video_url}" controls autoplay muted loop></video>`;
+else if(q.image_url) mediaDiv.innerHTML=`<img src="${q.image_url}">`;
+const optDiv=document.getElementById('q-options'); optDiv.innerHTML='';
+(q.options||[]).forEach((op,i)=>{
+const b=document.createElement('button'); b.className='btn'; b.style.background='#222'; b.innerText=op; b.onclick=()=>checkAns(i); optDiv.appendChild(b);
+});
+let need=0; if(q.order_num>=20) need=5;
+document.getElementById('credit-info').innerText=`Credits: ${credits} ${need>0?` | This Q needs ${need} credits`:''}`;
 }
 
-async function iPaid(){
-  const msg=document.getElementById('msg');
-  msg.style.display='block';
-  msg.innerHTML='⏳ Verifying payment to '+WALLET+'...';
-  
-  try{
-    const {data: prof} = await supabaseClient.from('profiles').insert({email:'guest_'+Date.now()+'@quiz.com', credits:0}).select().single();
-    await supabaseClient.from('payments').insert({
-      user_id: prof.id,
-      amount: selectedEuro,
-      credits: selectedCredits,
-      status: 'paid',
-      viva_id: 'MINIPAY_'+Date.now()+'_TO_'+WALLET
-    });
-    await supabaseClient.from('quiz_progress').insert({
-      user_id: prof.id,
-      current_q: 31,
-      auto_confirmed: true
-    });
-    msg.innerHTML="✅ Payment logged!<br>💰 Money will appear in your MiniPay $0.10 wallet<br>→ Continuing to Q31...";
-    msg.style.color='#00ff88';
-    setTimeout(()=>{ window.location.href="q31.html?uid="+prof.id+"&credits="+selectedCredits; }, 2000);
-  }catch(e){
-    msg.innerHTML="Error: "+e.message;
-  }
+function checkAns(i){
+const q=questions[current];
+if(i===q.correct){
+if(q.order_num>=20){
+if(credits<5){alert('Need 5 credits! Go to Shop - PIX/Bank/Card → MiniPay'); showTab('shop'); return;}
+credits-=5; localStorage.setItem('credits',credits);
+}
+current++; renderQ();
+}else{
+const card=document.getElementById('card'); card.style.animation='shake 0.3s'; setTimeout(()=>card.style.animation='',300);
+alert('Wrong 💔 Try another option - stay on same question!');
+}
+}
+
+function showTab(t){
+document.getElementById('card').style.display=t==='game'?'block':'none';
+document.getElementById('shopTab').style.display=t==='shop'?'block':'none';
+document.getElementById('policyTab').style.display=t==='policy'?'block':'none';
+document.querySelectorAll('.tab button').forEach(b=>b.classList.remove('active'));
+document.getElementById('t-'+t).classList.add('active');
+}
+
+let holdTimer; const trigger=document.getElementById('adminTrigger');
+trigger.addEventListener('touchstart',()=>{holdTimer=setTimeout(()=>{const p=prompt('Admin password'); if(p==='19761976'){document.getElementById('adminPanel').style.display='block'; loadPayments();}},3000)});
+trigger.addEventListener('mousedown',()=>{holdTimer=setTimeout(()=>{const p=prompt('Admin password'); if(p==='19761976'){document.getElementById('adminPanel').style.display='block'; loadPayments();}},3000)});
+['touchend','mouseup'].forEach(e=>trigger.addEventListener(e,()=>clearTimeout(holdTimer)));
+
+async function uploadQuestion(){
+const file=document.getElementById('qFile').files[0]; let url='';
+if(file){
+const name=Date.now()+'_'+file.name;
+await supabaseClient.storage.from('media').upload(name,file);
+url=supabaseClient.storage.from('media').getPublicUrl(name).data.publicUrl;
+}
+const isVideo = file && file.type.startsWith('video');
+await supabaseClient.from('questions').insert({ order_num:parseInt(document.getElementById('qOrder').value), text:document.getElementById('qText').value, options:document.getElementById('qOpt').value.split(','), correct:parseInt(document.getElementById('qCorrect').value), image_url:isVideo?'':url, video_url:isVideo?url:'', is_boss:document.getElementById('qBoss').checked || parseInt(document.getElementById('qOrder').value)%20===0 });
+alert('Uploaded to Supabase - all Brazil/Mexico will see instantly'); loadQs();
+}
+async function requestPay(amount,method){
+const uid=localStorage.getItem('uid')||'user_'+Date.now(); localStorage.setItem('uid',uid);
+await supabaseClient.from('payments').insert({user_id:uid,amount,method,status:'pending', viva_id: MINIPAY_ADDRESS});
+alert('Payment request created. Pay via '+method+' to '+MINIPAY_ADDRESS+' then click I PAID');
+}
+async function iPaid(){ await requestPay('Manual claim','All Methods'); alert('Admin will check MiniPay USDT and add credits'); }
+async function loadPayments(){
+const {data}=await supabaseClient.from('payments').select('*').eq('status','pending');
+document.getElementById('adminPayments').innerHTML=(data||[]).map(p=>`<div>${p.user_id} - ${p.amount} - ${p.method} <button onclick="confirmPay('${p.id}','${p.user_id}')">Confirm + Add Credits</button></div>`).join('');
+}
+async function confirmPay(id,uid){
+await supabaseClient.from('payments').update({status:'confirmed'}).eq('id',id);
+credits+=20; localStorage.setItem('credits',credits);
+alert('Confirmed - user gets credits next sync'); loadPayments();
 }
 </script>
 </body>
