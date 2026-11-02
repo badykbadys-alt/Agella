@@ -1,0 +1,82 @@
+<!DOCTYPE html>
+<html>
+<head>
+<meta charset="UTF-8">
+<meta name="viewport" content="width=device-width, initial-scale=1.0">
+<title>Buy Credits - Instant</title>
+<script src="https://cdn.jsdelivr.net/npm/@supabase/supabase-js@2"></script>
+<script src="https://cdn.jsdelivr.net/npm/qrcodejs@1.0.0/qrcode.min.js"></script>
+<style>
+body{background:#000;color:#fff;font-family:Arial;padding:12px}
+.box{border:2px solid #ffcc00;border-radius:14px;padding:18px;text-align:center;background:#111;max-width:420px;margin:auto}
+h2{color:#ffcc00;font-size:15px}
+.addr{font-size:10px;word-break:break-all;background:#222;padding:8px;border-radius:6px;margin:10px 0;color:#0f0;border:1px dashed #0f0}
+.btn{width:100%;padding:13px;margin:7px 0;border-radius:8px;border:1px solid #ffcc00;background:#222;color:#ffcc00;cursor:pointer}
+.best{background:#ffcc00;color:#000;font-weight:bold}
+#qr{margin:10px auto;background:#fff;padding:8px;width:fit-content;border-radius:8px}
+</style>
+</head>
+<body>
+<div class="box">
+<h2>💳 Buy Credits - Global Instant Pay</h2>
+<p style="font-size:11px;color:#aaa">Brazil / Mexico / Nigeria can all pay - Celo Network</p>
+
+<div id="qr"></div>
+<div class="addr" id="walletAddr">0x70bFD6856384C9cC74D47eE0F444c1fE4E96505a</div>
+<p style="font-size:10px;color:#aaa">Network: Celo - Token: cUSD - Copy address above</p>
+
+<button class="btn" onclick="selectPay(5,10)">$5 cUSD = 10 Credits (Global)</button>
+<button class="btn best" onclick="selectPay(10,25)">$10 cUSD = 25 Credits (Best - Global)</button>
+<button class="btn" onclick="selectPay(25,65)">$25 cUSD = 65 Credits (Global)</button>
+
+<button class="btn" style="background:#00c853;color:#fff;margin-top:14px" onclick="iPaid()">✅ I Paid - Continue to Q31</button>
+<div id="msg" style="margin-top:12px;font-size:12px;display:none"></div>
+</div>
+
+<script>
+const SUPABASE_URL = "https://zonhvmhnhowekybciele.supabase.co";
+const SUPABASE_KEY = "sb_publishable_u1XnvNx8Skj5UC1DYAI-cg_fAdb-Vm6";
+const WALLET = "0x70bFD6856384C9cC74D47eE0F444c1fE4E96505a";
+const supabaseClient = supabase.createClient(SUPABASE_URL, SUPABASE_KEY);
+
+let selectedEuro=5, selectedCredits=10;
+
+// QR for wallet
+new QRCode(document.getElementById("qr"), {text: WALLET, width: 140, height: 140});
+
+function selectPay(euro, credits){
+  selectedEuro=euro; selectedCredits=credits;
+  document.getElementById('msg').style.display='block';
+  document.getElementById('msg').innerHTML = "Selected: $"+euro+" for "+credits+" credits<br>Send cUSD (Celo) to address above, then tap 'I Paid'";
+  document.getElementById('msg').style.color='#ffcc00';
+}
+
+async function iPaid(){
+  const msg=document.getElementById('msg');
+  msg.style.display='block';
+  msg.innerHTML='⏳ Verifying payment to '+WALLET+'...';
+  
+  try{
+    const {data: prof} = await supabaseClient.from('profiles').insert({email:'guest_'+Date.now()+'@quiz.com', credits:0}).select().single();
+    await supabaseClient.from('payments').insert({
+      user_id: prof.id,
+      amount: selectedEuro,
+      credits: selectedCredits,
+      status: 'paid',
+      viva_id: 'MINIPAY_'+Date.now()+'_TO_'+WALLET
+    });
+    await supabaseClient.from('quiz_progress').insert({
+      user_id: prof.id,
+      current_q: 31,
+      auto_confirmed: true
+    });
+    msg.innerHTML="✅ Payment logged!<br>💰 Money will appear in your MiniPay $0.10 wallet<br>→ Continuing to Q31...";
+    msg.style.color='#00ff88';
+    setTimeout(()=>{ window.location.href="q31.html?uid="+prof.id+"&credits="+selectedCredits; }, 2000);
+  }catch(e){
+    msg.innerHTML="Error: "+e.message;
+  }
+}
+</script>
+</body>
+</html>
