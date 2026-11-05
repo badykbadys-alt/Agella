@@ -1,153 +1,41 @@
 <!doctype html>
-<html lang="en">
-<head>
-<meta charset="utf-8"><meta name="viewport" content="width=device-width,initial-scale=1">
-<title>Love Quiz â€” MiniPay Edition</title>
-<meta name="theme-color" content="#100b13">
+<html lang="en"><head><meta charset="utf-8"><meta name="viewport" content="width=device-width,initial-scale=1"><meta name="theme-color" content="#09090d"><title>Love Quiz — MiniPay Edition</title>
 <style>
-:root{--bg:#100b13;--card:#1b1320;--pink:#ff4f91;--gold:#ffd27a;--muted:#b9aab8;--line:#39283a}
-*{box-sizing:border-box}body{margin:0;background:radial-gradient(circle at top,#32172b,#100b13 55%);color:#fff;font:16px system-ui,Arial;min-height:100vh;padding:22px 14px}
-.wrap{max-width:760px;margin:auto}.card{background:rgba(27,19,32,.96);border:1px solid var(--line);border-radius:24px;padding:22px;box-shadow:0 18px 60px #0008}
-header{text-align:center;margin-bottom:18px}h1{margin:0;color:var(--pink);font-size:clamp(30px,8vw,46px);letter-spacing:-1px}header p{margin:5px 0;color:var(--gold);font-size:12px;letter-spacing:2px}
-h2{margin:8px 0 14px}p{line-height:1.5}.muted{color:var(--muted)}.row{display:flex;gap:10px;flex-wrap:wrap}.row>*{flex:1}
-button,.btn{border:0;border-radius:14px;padding:13px 16px;background:linear-gradient(135deg,var(--pink),#d92f78);color:white;font-weight:750;cursor:pointer;text-align:center}
-button.secondary{background:#302334;border:1px solid #5a3a53}button.gold{background:linear-gradient(135deg,#ffdb91,#c68a35);color:#24150b}
-button:disabled{opacity:.5;cursor:not-allowed}input,select,textarea{width:100%;padding:13px;border-radius:12px;border:1px solid var(--line);background:#100b13;color:white;margin:6px 0 12px;font:inherit}
-label{display:block;color:var(--muted);font-size:13px;margin-top:8px}.hidden{display:none!important}.question-img,.question-video{width:100%;max-height:340px;object-fit:contain;border-radius:16px;background:#09070a;margin:12px 0}.answer{display:block;width:100%;margin:9px 0;background:#302334;border:1px solid #67425c;text-align:left}.answer:hover{border-color:var(--pink)}.notice{padding:12px;border-radius:12px;background:#2a1d2b;color:var(--gold);margin:12px 0}.topline{display:flex;justify-content:space-between;gap:10px;align-items:center;flex-wrap:wrap}.pill{border:1px solid var(--line);padding:7px 11px;border-radius:30px;color:var(--gold);font-size:13px}.divider{border:0;border-top:1px solid var(--line);margin:20px 0}.small{font-size:12px}.admin-item{padding:12px;border:1px solid var(--line);border-radius:12px;margin:8px 0}.footer{text-align:center;color:#8d7c8c;margin:18px;font-size:12px}
-</style>
-</head>
-<body><main class="wrap"><section class="card">
-<header><h1 id="brand">ðŸ’— Love Quiz ðŸ’—</h1><p>MINIPAY EDITION â€¢ CELO</p></header>
-<div class="topline"><span class="pill" id="accountState">Not signed in</span><span class="pill" id="creditState">Credits: 0</span></div>
-<section id="authView">
-<h2>Welcome, love ðŸ’•</h2><p class="muted">Create an account or sign in to play and keep your credits.</p>
-<label>Email</label><input id="email" type="email" autocomplete="email" placeholder="you@example.com">
-<label>Password</label><input id="password" type="password" autocomplete="current-password" placeholder="At least 6 characters">
-<div class="row"><button id="signupBtn">Create account</button><button class="secondary" id="loginBtn">Sign in</button></div>
-<p id="authMsg" class="notice hidden"></p>
-</section>
-<section id="homeView" class="hidden">
-<h2>Ready to test your love? ðŸ’˜</h2><p class="muted">Questions 1â€“19 are free. From question 20 onward, each question costs 5 credits. A wrong answer keeps you on the same question.</p>
-<div class="row"><button id="playBtn">Play Quiz</button><button class="gold" id="shopBtn">Buy credits</button></div>
-<div class="row" style="margin-top:10px"><button class="secondary" id="historyBtn">Purchase history</button><button class="secondary hidden" id="adminBtn">Admin dashboard</button><button class="secondary" id="logoutBtn">Sign out</button></div>
-</section>
-<section id="quizView" class="hidden">
-<div class="topline"><span class="pill" id="qProgress">Question 1</span><span class="pill" id="qCost">FREE</span></div>
-<div id="qMedia"></div><h2 id="qText"></h2><div id="answers"></div><p id="quizMsg" class="notice hidden"></p>
-<button class="secondary" id="backHome">Back to home</button>
-</section>
-<section id="shopView" class="hidden">
-<h2>Get more quiz credits ðŸ’Ž</h2><p class="muted">Pay directly from MiniPay using a Celo stablecoin. Your credits are added only after the blockchain transaction is verified.</p>
-<div class="admin-item"><b>$5.50</b> â€” 10 credits <button data-pack="5.50" class="buyBtn">Buy</button></div>
-<div class="admin-item"><b>$11.00</b> â€” 25 credits <button data-pack="11.00" class="buyBtn">Buy</button></div>
-<div class="admin-item"><b>$27.00</b> â€” 65 credits <button data-pack="27.00" class="buyBtn">Buy</button></div>
-<label>Stablecoin</label><select id="token"><option value="USDC">USDC</option><option value="USDT">USDT</option><option value="cUSD">cUSD</option></select>
-<p class="small muted">Network: Celo Mainnet. Make sure your MiniPay wallet is on Celo and has enough token balance and gas.</p>
-<p id="payMsg" class="notice hidden"></p><button class="secondary" id="shopBack">Back</button>
-</section>
-<section id="historyView" class="hidden"><h2>Purchase history</h2><div id="historyList"></div><button class="secondary" id="historyBack">Back</button></section>
-<section id="adminView" class="hidden">
-<h2>Admin dashboard ðŸ› ï¸</h2>
-<h3>Add / update quiz question</h3>
-<label>Question number</label><input id="adminNumber" type="number" min="1" placeholder="1">
-<label>Question text</label><textarea id="adminQuestion" rows="3"></textarea>
-<label>Option 1</label><input id="adminOpt1">
-<label>Option 2</label><input id="adminOpt2">
-<label>Correct option</label><select id="adminCorrect"><option value="opt1">Option 1</option><option value="opt2">Option 2</option></select>
-<label>Image URL (optional)</label><input id="adminImage" placeholder="https://...">
-<label>Video URL (optional â€” use for boss questions 20, 40, 60...)</label><input id="adminVideo" placeholder="https://...">
-<label>Correct-answer reply</label><input id="adminCorrectReply">
-<label>Wrong-answer reply</label><input id="adminWrongReply">
-<button id="saveQuestion">Save question</button><div id="adminMsg" class="notice hidden"></div><hr class="divider"><h3>Existing questions</h3><div id="questionList"></div><button class="secondary" id="adminBack">Back</button>
-</section>
-</section><p class="footer">Made with ðŸ’— â€¢ Secure payments on Celo</p></main>
-<script src="https://cdn.jsdelivr.net/npm/@supabase/supabase-js@2"></script>
-<script>
-/* Public browser configuration. Never put a Supabase secret/service-role key here. */
-const SUPABASE_URL = "https://zonhvmhnhowekybciele.supabase.co";
-const SUPABASE_ANON_KEY = "sb_publishable_u1XnvNx8Skj5UC1DYAI-cg_fAdb-Vm6";
-const TREASURY_WALLET = "0x70bFD6856384C9cC74D47eE0F444c1fE4E96505a";
-const Celo = { chainId:"0xa4ec", chainName:"Celo", rpcUrls:["https://forno.celo.org"], nativeCurrency:{name:"CELO",symbol:"CELO",decimals:18}, blockExplorerUrls:["https://celoscan.io"] };
-const TOKENS = {
- USDC:{address:"0xceba9300f2b948710d2653dd7b07f33a8b32118c",decimals:6},
- USDT:{address:"0x48065fbbe25f71c9282ddf5e1cd6d6a887483d5e",decimals:6},
- cUSD:{address:"0x765de816845861e75a25fca122bb6898b8b1282a",decimals:18}
-};
-const PACKS={"5.50":{cents:550,credits:10},"11.00":{cents:1100,credits:25},"27.00":{cents:2700,credits:65}};
-const $=id=>document.getElementById(id);
-const db=window.supabase.createClient(SUPABASE_URL,SUPABASE_ANON_KEY);
-let session=null, profile=null, questions=[], currentQuestion=null;
-function show(id){["authView","homeView","quizView","shopView","historyView","adminView"].forEach(x=>$(x).classList.toggle("hidden",x!==id))}
-function msg(id,t){$(id).textContent=t;$(id).classList.remove("hidden")}
-function hideMsg(id){$(id).classList.add("hidden")}
-async function refresh(){
- const {data:{session:s}}=await db.auth.getSession();session=s;
- $("accountState").textContent=session?session.user.email:"Not signed in";
- if(!session){profile=null;$("creditState").textContent="Credits: 0";show("authView");return}
- const {data:p,error}=await db.from("profiles").select("credits,role").eq("id",session.user.id).single();
- if(error){console.error(error);alert("Could not load your profile: "+error.message);return}
- profile=p;$("creditState").textContent="Credits: "+p.credits;
- $("adminBtn").classList.toggle("hidden",p.role!=="admin");show("homeView");
-}
-$("signupBtn").onclick=async()=>{const {error}=await db.auth.signUp({email:$("email").value.trim(),password:$("password").value});msg("authMsg",error?error.message:"Account created. Check your email if confirmation is enabled, then sign in.")};
-$("loginBtn").onclick=async()=>{const {error}=await db.auth.signInWithPassword({email:$("email").value.trim(),password:$("password").value});if(error)msg("authMsg",error.message);else await refresh()};
-$("logoutBtn").onclick=async()=>{await db.auth.signOut();await refresh()};
-$("playBtn").onclick=async()=>{await loadQuestions();if(!questions.length){alert("No published questions yet. Ask the admin to add questions.");return}currentQuestion=1;await renderQuestion()};
-async function loadQuestions(){const {data,error}=await db.from("quiz_questions").select("id,question_number,question,option_one,option_two,image_url,video_url").eq("published",true).order("question_number");if(error)throw error;questions=data||[]}
-async function renderQuestion(){
- const q=questions.find(x=>x.question_number===currentQuestion);if(!q){$("qText").textContent="You have reached the end! ðŸ’—";$("qMedia").innerHTML="";$("answers").innerHTML="";show("quizView");return}
- const paid=currentQuestion>=20;$("qProgress").textContent="Question "+currentQuestion;$("qCost").textContent=paid?"5 CREDITS":"FREE";
- if(q.video_url && currentQuestion%20===0){$("qMedia").innerHTML=`<video class="question-video" controls playsinline src="${esc(q.video_url)}"></video>`}
- else if(q.image_url){$("qMedia").innerHTML=`<img class="question-img" src="${esc(q.image_url)}" alt="Question image">`}else $("qMedia").innerHTML="";
- $("qText").textContent=q.question;$("answers").innerHTML="";
- [["opt1",q.option_one],["opt2",q.option_two]].forEach(([v,t])=>{const b=document.createElement("button");b.className="answer";b.textContent=t;b.onclick=()=>submitAnswer(q.id,v);$("answers").appendChild(b)});
- hideMsg("quizMsg");show("quizView");
-}
-async function submitAnswer(questionId,choice){
- const buttons=[...$("answers").querySelectorAll("button")];buttons.forEach(b=>b.disabled=true);
- const {data,error}=await db.functions.invoke("answer-question",{body:{question_id:questionId,choice}});
- if(error){msg("quizMsg",error.message||"Could not submit answer.");buttons.forEach(b=>b.disabled=false);return}
- msg("quizMsg",data.message);
- if(data.correct){if(data.credits!==undefined){profile.credits=data.credits;$("creditState").textContent="Credits: "+data.credits}currentQuestion++;setTimeout(renderQuestion,1100)}
- else buttons.forEach(b=>b.disabled=false);
-}
-$("backHome").onclick=()=>show("homeView");$("shopBtn").onclick=()=>show("shopView");$("shopBack").onclick=()=>show("homeView");$("historyBack").onclick=()=>show("homeView");$("adminBack").onclick=()=>show("homeView");
-async function buy(pack){
- const cfg=PACKS[pack],symbol=$("token").value,token=TOKENS[symbol],out=$("payMsg");hideMsg("payMsg");
- if(!window.ethereum){msg("payMsg","Open this website inside MiniPay to pay. A compatible Celo wallet is required.");return}
- try{
-  await window.ethereum.request({method:"wallet_switchEthereumChain",params:[{chainId:Celo.chainId}]});
- }catch(e){if(e.code===4902){await window.ethereum.request({method:"wallet_addEthereumChain",params:[Celo]})}else{msg("payMsg","Please switch your wallet to Celo and try again.");return}}
- try{
-  const accounts=await window.ethereum.request({method:"eth_requestAccounts"});const from=accounts[0];
-  const amount=BigInt(cfg.cents)*10n**BigInt(token.decimals)/100n;
-  const recipient=TREASURY_WALLET.slice(2).toLowerCase().padStart(64,"0");
-  const value=amount.toString(16).padStart(64,"0");
-  const data="0xa9059cbb"+recipient+value;
-  msg("payMsg","Confirm the token transfer in MiniPay. Do not close the page.");
-  const hash=await window.ethereum.request({method:"eth_sendTransaction",params:[{from,to:token.address,data,value:"0x0"}]});
-  msg("payMsg","Transaction sent. Verifying on Celoâ€¦");
-  const {data:result,error}=await db.functions.invoke("verify-payment",{body:{tx_hash:hash,package:pack,token:symbol}});
-  if(error)throw error;
-  if(result.status==="confirmed"){msg("payMsg",`Payment verified! ${cfg.credits} credits added. ðŸŽ‰`);await refresh()}
-  else msg("payMsg",result.message||"Payment is not confirmed yet. You can retry verification from purchase history or contact support.");
- }catch(e){console.error(e);msg("payMsg",e.message||"Payment failed.")}
-}
-document.querySelectorAll(".buyBtn").forEach(b=>b.onclick=()=>buy(b.dataset.pack));
-$("historyBtn").onclick=async()=>{const {data,error}=await db.from("payments").select("amount_usd,credits,token,tx_hash,status,created_at").order("created_at",{ascending:false});$("historyList").innerHTML=error?"Could not load history.":(data||[]).map(p=>`<div class="admin-item">$${p.amount_usd} â€¢ ${p.credits} credits â€¢ ${esc(p.token)} â€¢ ${esc(p.status)}<br><span class="small muted">${esc(p.tx_hash||"")}</span></div>`).join("")||"No purchases yet.";show("historyView")};
-$("adminBtn").onclick=async()=>{await loadAdminQuestions();show("adminView")};
-async function loadAdminQuestions(){const {data,error}=await db.from("quiz_questions").select("*").order("question_number");if(error){msg("adminMsg",error.message);return}questions=data||[];$("questionList").innerHTML=questions.map(q=>`<div class="admin-item">#${q.question_number} â€” ${esc(q.question)} (${q.published?"published":"draft"}) <button class="secondary" onclick="editQ('${q.id}')">Edit</button> <button class="secondary" onclick="deleteQ('${q.id}')">Delete</button></div>`).join("")}
-window.editQ=async id=>{const q=questions.find(x=>x.id===id);if(!q)return;$("adminNumber").value=q.question_number;$("adminQuestion").value=q.question;$("adminOpt1").value=q.option_one;$("adminOpt2").value=q.option_two;$("adminImage").value=q.image_url||"";$("adminVideo").value=q.video_url||"";const {data}=await db.from("quiz_answers").select("*").eq("question_id",id).single();if(data){$("adminCorrect").value=data.correct_option;$("adminCorrectReply").value=data.correct_reply||"";$("adminWrongReply").value=data.wrong_reply||""} $("saveQuestion").dataset.edit=id};
-window.deleteQ=async id=>{if(!confirm("Delete this question?"))return;const {error}=await db.from("quiz_questions").delete().eq("id",id);if(error)alert(error.message);else loadAdminQuestions()};
-$("saveQuestion").onclick=async()=>{
- const payload={question_number:Number($("adminNumber").value),question:$("adminQuestion").value.trim(),option_one:$("adminOpt1").value.trim(),option_two:$("adminOpt2").value.trim(),image_url:$("adminImage").value.trim()||null,video_url:$("adminVideo").value.trim()||null,published:true};
- if(!payload.question_number||!payload.question||!payload.option_one||!payload.option_two){msg("adminMsg","Fill in question number, question and both options.");return}
- let id=$("saveQuestion").dataset.edit;let result=id?await db.from("quiz_questions").update(payload).eq("id",id).select().single():await db.from("quiz_questions").insert(payload).select().single();
- if(result.error){msg("adminMsg",result.error.message);return}id=result.data.id;
- const {error}=await db.from("quiz_answers").upsert({question_id:id,correct_option:$("adminCorrect").value,correct_reply:$("adminCorrectReply").value,wrong_reply:$("adminWrongReply").value});
- if(error){msg("adminMsg",error.message);return}
- $("saveQuestion").dataset.edit="";msg("adminMsg","Question saved.");["adminNumber","adminQuestion","adminOpt1","adminOpt2","adminImage","adminVideo","adminCorrectReply","adminWrongReply"].forEach(x=>$(x).value="");await loadAdminQuestions()
-};
-function esc(s){return String(s??"").replace(/[&<>"']/g,c=>({"&":"&amp;","<":"&lt;",">":"&gt;",'"':"&quot;","'":"&#39;"}[c]))}
-db.auth.onAuthStateChange(()=>setTimeout(refresh,0));refresh();
+:root{--bg:#09090d;--card:#17141e;--pink:#ff4f91;--gold:#f4c66a;--text:#fff7fb;--muted:#b9aeb9;--line:#3b2d40;--green:#70e0ae;--red:#ff9caa}*{box-sizing:border-box}body{margin:0;min-height:100vh;background:radial-gradient(circle at 15% 5%,#32152b 0,transparent 34%),radial-gradient(circle at 90% 90%,#252044 0,transparent 30%),var(--bg);color:var(--text);font:16px/1.5 system-ui,sans-serif}button,input,textarea,select{font:inherit}button{cursor:pointer;border:0;border-radius:13px;padding:12px 16px;font-weight:750;background:linear-gradient(135deg,var(--pink),#d83e82);color:white}button.secondary{background:#2b2531;border:1px solid var(--line)}button.gold{background:linear-gradient(135deg,#f6d58b,#c78c35);color:#24170a}button.danger{background:#612b3a}button:disabled{opacity:.5}.wrap{width:min(960px,100%);margin:auto;padding:18px 14px 45px}.top,.row{display:flex;justify-content:space-between;align-items:center;gap:10px;flex-wrap:wrap}.brand{font-size:25px;font-weight:900}.brand span,.pink{color:var(--pink)}.tag{font-size:10px;letter-spacing:2px;color:var(--gold);font-weight:800}.card{background:linear-gradient(145deg,#191620f5,#100f16f5);border:1px solid #ffffff12;border-radius:22px;padding:clamp(17px,4vw,28px);margin:14px 0;box-shadow:0 22px 70px #0008}h1,h2,h3{line-height:1.15;margin:0 0 12px}h1{font-size:clamp(28px,6vw,44px)}p{color:var(--muted);margin:8px 0 17px}.small{font-size:13px;color:var(--muted)}.hidden{display:none!important}.field{width:100%;background:#0c0b11;border:1px solid var(--line);color:white;border-radius:11px;padding:12px;margin:6px 0 12px}textarea.field{min-height:75px}.status{padding:11px 13px;border-radius:12px;background:#241d2a;color:#f5d9e7;margin:12px 0}.ok{color:var(--green)!important}.bad{color:var(--red)!important}.hero{text-align:center;padding:30px 12px}.heart{font-size:54px}.actions,.grid{display:grid;grid-template-columns:repeat(auto-fit,minmax(170px,1fr));gap:10px;margin:18px 0}.package,.qitem{border:1px solid var(--line);background:#1c1822;border-radius:15px;padding:15px;margin:10px 0}.package strong{font-size:23px;color:var(--gold);display:block}.answers{display:grid;gap:10px;margin-top:18px}.answer{width:100%;text-align:left;background:#292230;border:1px solid #514052;padding:15px;border-radius:14px}.media{width:100%;max-height:300px;object-fit:contain;border-radius:14px;margin:12px 0;background:#08080b}.progress{height:8px;background:#302936;border-radius:99px;overflow:hidden;margin:15px 0}.progress i{display:block;height:100%;background:linear-gradient(90deg,var(--pink),var(--gold))}hr{border:0;border-top:1px solid var(--line);margin:20px 0}footer{text-align:center;color:#776d7a;font-size:12px;padding:22px}
+</style></head><body><div class="wrap">
+<header class="top"><div><div class="brand">Love <span>Quiz</span> 💗</div><div class="tag">MINIPAY EDITION • CELO</div></div><button class="secondary" id="accountBtn">Sign in</button></header>
+<main>
+<section id="home" class="card hero"><div class="heart">💞</div><div class="tag">A LITTLE FUN, A LOT OF LOVE</div><h1>How well do you know <span class="pink">love?</span></h1><p>Answer questions, unlock new levels and enjoy the journey.</p><div class="actions"><button id="playBtn">Play Quiz</button><button class="gold" id="shopBtn">Buy Credits</button><button class="secondary" id="historyBtn">Purchase History</button></div><p class="small">Questions 1–19 are free. From question 20 onward, each question costs 5 credits. Every 20th question is a video boss question.</p><div id="homeStatus" class="status hidden"></div></section>
+<section id="auth" class="card hidden"><h2>Your account</h2><p>Sign in or create an account to save credits and progress.</p><label>Email</label><input class="field" id="email" type="email" autocomplete="email"><label>Password</label><input class="field" id="password" type="password" autocomplete="current-password"><div class="row"><button id="signInBtn">Sign in</button><button class="secondary" id="signUpBtn">Create account</button></div><div id="authStatus" class="status hidden"></div></section>
+<section id="quiz" class="card hidden"><div class="row"><div><div class="tag">QUESTION <span id="qNumber">1</span></div><h2 id="qTitle">Loading…</h2></div><div>Your credits <h2 class="gold" id="creditCount">0</h2></div></div><div class="progress"><i id="progressBar"></i></div><img id="qImage" class="media hidden" alt="Question image"><video id="qVideo" class="media hidden" controls playsinline></video><div id="answers" class="answers"></div><div id="quizStatus" class="status hidden"></div><div class="row"><button class="secondary" id="quizHomeBtn">Home</button><button class="gold" id="quizShopBtn">Get credits</button></div></section>
+<section id="shop" class="card hidden"><h2>Get more credits</h2><p>MiniPay wallet payments on Celo.</p><div class="grid"><div class="package"><strong>$5.50</strong><p>10 quiz credits</p><button class="buyBtn" data-package="starter">Choose</button></div><div class="package"><strong>$11</strong><p>25 quiz credits</p><button class="buyBtn" data-package="popular">Choose</button></div><div class="package"><strong>$27</strong><p>65 quiz credits</p><button class="buyBtn" data-package="value">Choose</button></div></div><div id="shopStatus" class="status">Checkout is not connected yet. Do not send funds until it has been tested.</div><button class="secondary" id="shopHomeBtn">Back</button></section>
+<section id="history" class="card hidden"><h2>Purchase history</h2><div id="historyList" class="small">Sign in to view history.</div><hr><button class="secondary" id="historyHomeBtn">Back</button></section>
+<section id="admin" class="card hidden"><div class="row"><div><div class="tag">PRIVATE AREA</div><h2>Admin dashboard</h2></div><span class="small" id="adminEmail"></span></div><p>Create questions, set the correct answer, and publish when ready.</p><div class="status">Questions 20, 40, 60… are boss questions and require a video URL. New questions are saved unpublished.</div>
+<h3>Create a question</h3><label>Question number</label><input class="field" id="questionNumber" type="number" min="1" step="1" placeholder="e.g. 1"><label>Question</label><textarea class="field" id="questionText"></textarea><div class="grid"><div><label>Option 1</label><input class="field" id="optionOne"></div><div><label>Option 2</label><input class="field" id="optionTwo"></div></div><label>Correct option</label><select class="field" id="correctOption"><option value="opt1">Option 1</option><option value="opt2">Option 2</option></select><label>Correct reply</label><textarea class="field" id="correctReply" placeholder="Correct! 💗"></textarea><label>Wrong reply</label><textarea class="field" id="wrongReply" placeholder="Not quite. Try again."></textarea><label>Image URL (optional)</label><input class="field" id="imageUrl" type="url" placeholder="https://…"><label>Boss video URL (required for every 20th question)</label><input class="field" id="videoUrl" type="url" placeholder="https://…"><button id="createQuestionBtn">Save question as unpublished</button><div id="adminStatus" class="status hidden"></div><hr><div class="row"><h3>Manage questions</h3><button class="secondary" id="refreshQuestionsBtn">Refresh list</button></div><div id="adminQuestionList" class="small">No questions loaded.</div><hr><button class="secondary" id="adminHomeBtn">Back to home</button></section>
+</main><footer>Made with <span class="pink">♥</span> for the Love Quiz community</footer></div>
+<script type="module">
+import{createClient}from'https://cdn.jsdelivr.net/npm/@supabase/supabase-js@2/+esm';
+const SUPABASE_URL='https://zonhvmhnhowekybciele.supabase.co';
+const SUPABASE_ANON_KEY='sb_publishable_u1XnvNx8Skj5UC1DYAI-cg_fAdb-Vm6';
+const supabase=createClient(SUPABASE_URL,SUPABASE_ANON_KEY),$=id=>document.getElementById(id);
+const sections=['home','auth','quiz','shop','history','admin'];let session=null,profile=null,questions=[],currentIndex=0,busy=false;
+function show(s){sections.forEach(x=>$(x).classList.toggle('hidden',x!==s));window.scrollTo(0,0)}
+function msg(id,t,type=''){const e=$(id);e.textContent=t;e.className='status '+type;e.classList.remove('hidden')}
+function credits(){return Number(profile?.credits||0)}
+function updateHeader(){$('accountBtn').textContent=session?'Sign out':'Sign in';$('creditCount').textContent=credits()}
+async function refreshProfile(){if(!session){profile=null;updateHeader();return}const{data,error}=await supabase.from('profiles').select('id,email,credits,role').eq('id',session.user.id).maybeSingle();if(error)console.error(error);profile=data||{credits:0,role:'customer'};updateHeader()}
+async function adminCall(body){const{data,error}=await supabase.functions.invoke('admin-manage-questions',{body});if(error)throw error;if(data?.error)throw Error(data.error);return data}
+async function loadPublished(){const{data,error}=await supabase.from('quiz_questions').select('id,question_number,question,option_one,option_two,image_url,video_url').eq('published',true).order('question_number');if(error)throw error;questions=data||[];return questions.length>0}
+async function startQuiz(){if(!session){show('auth');msg('authStatus','Sign in or create an account before playing.');return}await refreshProfile();try{if(!await loadPublished()){show('quiz');msg('quizStatus','No published questions yet. Check back soon.');return}}catch(e){show('quiz');msg('quizStatus','Could not load questions. Try again later.','bad');return}currentIndex=0;show('quiz');renderQuestion()}
+function renderQuestion(){const q=questions[currentIndex];if(!q)return;const n=Number(q.question_number);$('qNumber').textContent=n;$('qTitle').textContent=q.question;$('creditCount').textContent=credits();$('progressBar').style.width=Math.min(100,n/Math.max(questions.length,100)*100)+'%';const im=$('qImage'),v=$('qVideo');im.classList.toggle('hidden',!q.image_url);if(q.image_url)im.src=q.image_url;else im.removeAttribute('src');v.classList.toggle('hidden',!q.video_url);if(q.video_url)v.src=q.video_url;else{v.pause();v.removeAttribute('src')}$('answers').innerHTML='';[['opt1',q.option_one],['opt2',q.option_two]].forEach(([key,label])=>{const b=document.createElement('button');b.className='answer';b.textContent=label;b.disabled=busy;b.onclick=()=>submitAnswer(q.id,n,key);$('answers').append(b)});$('quizStatus').classList.add('hidden')}
+async function submitAnswer(id,n,option){if(busy)return;if(n>=20&&credits()<5){msg('quizStatus','You need 5 credits to answer this question.','bad');return}busy=true;[...$('answers').children].forEach(b=>b.disabled=true);try{const{data,error}=await supabase.functions.invoke('submit-answer',{body:{question_id:id,question_number:n,selected_option:option}});if(error)throw error;if(data?.correct){await refreshProfile();msg('quizStatus',data.reply||'Correct! 💗','ok');setTimeout(()=>{if(currentIndex<questions.length-1){currentIndex++;renderQuestion()}else msg('quizStatus','You reached the end of published questions.','ok')},850)}else msg('quizStatus',data?.reply||'Not quite. Try again — you stay on this question.','bad')}catch(e){console.error(e);msg('quizStatus','Secure answer-checking function is not connected yet.','bad')}finally{busy=false;[...$('answers').children].forEach(b=>b.disabled=false)}}
+async function refreshAdminQuestions(){$('adminQuestionList').textContent='Loading…';const{data,error}=await supabase.from('quiz_questions').select('id,question_number,question,published').order('question_number');if(error){$('adminQuestionList').textContent='Could not load questions: '+error.message;return}$('adminQuestionList').innerHTML='';if(!data?.length){$('adminQuestionList').textContent='No questions created yet.';return}data.forEach(q=>{const box=document.createElement('div');box.className='qitem';const title=document.createElement('strong');title.textContent='Q'+q.question_number+' — '+q.question;const state=document.createElement('p');state.className='small';state.textContent=q.published?'Published':'Unpublished';const row=document.createElement('div');row.className='row';const toggle=document.createElement('button');toggle.className=q.published?'secondary':'gold';toggle.textContent=q.published?'Unpublish':'Publish';toggle.onclick=async()=>{toggle.disabled=true;try{await adminCall({action:q.published?'unpublish':'publish',question_id:q.id});msg('adminStatus','Question status updated.','ok');await refreshAdminQuestions()}catch(e){msg('adminStatus',e.message,'bad');toggle.disabled=false}};const del=document.createElement('button');del.className='danger';del.textContent='Delete';del.onclick=async()=>{if(!confirm('Delete question '+q.question_number+'?'))return;del.disabled=true;try{await adminCall({action:'delete',question_id:q.id});msg('adminStatus','Question deleted.','ok');await refreshAdminQuestions()}catch(e){msg('adminStatus',e.message,'bad');del.disabled=false}};row.append(toggle,del);box.append(title,state,row);$('adminQuestionList').append(box)})}
+async function openAdmin(){await refreshProfile();if(!session){show('auth');msg('authStatus','Sign in with the admin account first.');return}if(profile?.role!=='admin'){show('home');msg('homeStatus','This account does not have admin access.','bad');return}$('adminEmail').textContent=session.user.email||'';show('admin');await refreshAdminQuestions()}
+$('createQuestionBtn').onclick=async()=>{const n=Number($('questionNumber').value),q=$('questionText').value.trim(),a=$('optionOne').value.trim(),b=$('optionTwo').value.trim(),video=$('videoUrl').value.trim();if(!Number.isInteger(n)||n<1||!q||!a||!b){msg('adminStatus','Enter a valid number, question and both options.','bad');return}if(n%20===0&&!video){msg('adminStatus','Boss questions (20, 40, 60…) need a video URL.','bad');return}const btn=$('createQuestionBtn');btn.disabled=true;try{await adminCall({action:'create',question_number:n,question:q,option_one:a,option_two:b,correct_option:$('correctOption').value,correct_reply:$('correctReply').value.trim()||'Correct! 💗',wrong_reply:$('wrongReply').value.trim()||'Not quite. Try again.',image_url:$('imageUrl').value.trim()||null,video_url:video||null});msg('adminStatus','Saved as unpublished. Review it, then publish below.','ok');['questionNumber','questionText','optionOne','optionTwo','correctReply','wrongReply','imageUrl','videoUrl'].forEach(id=>$(id).value='');await refreshAdminQuestions()}catch(e){msg('adminStatus',e.message||'Could not save question.','bad')}finally{btn.disabled=false}};
+async function loadHistory(){if(!session){show('auth');msg('authStatus','Sign in to view history.');return}const{data,error}=await supabase.from('payments').select('amount_usd,credits,token_symbol,status,tx_hash,created_at').eq('user_id',session.user.id).order('created_at',{ascending:false});if(error){$('historyList').textContent='Could not load history.';return}$('historyList').innerHTML='';if(!data?.length){$('historyList').textContent='No purchases yet.';return}data.forEach(p=>{const d=document.createElement('div');d.className='qitem';d.textContent=`$${p.amount_usd??'—'} · ${p.credits??'—'} credits · ${p.token_symbol??'—'} · ${p.status??'—'} · ${new Date(p.created_at).toLocaleString()}`;$('historyList').append(d)})}
+$('playBtn').onclick=startQuiz;$('shopBtn').onclick=()=>show('shop');$('quizShopBtn').onclick=()=>show('shop');$('quizHomeBtn').onclick=()=>show('home');$('shopHomeBtn').onclick=()=>show('home');$('historyHomeBtn').onclick=()=>show('home');$('adminHomeBtn').onclick=()=>show('home');$('historyBtn').onclick=async()=>{show('history');await loadHistory()};$('accountBtn').onclick=async()=>{if(session){await supabase.auth.signOut();session=null;profile=null;updateHeader();show('home');msg('homeStatus','Signed out.','ok')}else show('auth')};
+$('signInBtn').onclick=async()=>{const{data,error}=await supabase.auth.signInWithPassword({email:$('email').value.trim(),password:$('password').value});if(error){msg('authStatus',error.message,'bad');return}session=data.session;await refreshProfile();show('home');msg('homeStatus','Welcome back!','ok')};
+$('signUpBtn').onclick=async()=>{const{error}=await supabase.auth.signUp({email:$('email').value.trim(),password:$('password').value});if(error){msg('authStatus',error.message,'bad');return}msg('authStatus','Account created. Check your email if confirmation is enabled.','ok')};
+$('refreshQuestionsBtn').onclick=refreshAdminQuestions;document.querySelectorAll('.buyBtn').forEach(b=>b.onclick=()=>{if(!session){show('auth');msg('authStatus','Sign in before buying credits.');return}msg('shopStatus','MiniPay checkout is not connected yet. Do not send funds.','bad')});
+supabase.auth.onAuthStateChange((_event,s)=>{session=s;refreshProfile()});const{data:{session:s0}}=await supabase.auth.getSession();session=s0;await refreshProfile();updateHeader();
 </script></body></html>
